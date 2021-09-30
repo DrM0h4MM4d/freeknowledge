@@ -18,6 +18,8 @@ realtime ajax views
 
 realtime ajax delete views
 
+markdown text field
+
 Deployed on heroku
 
 
