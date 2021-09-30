@@ -1,0 +1,103 @@
+{% extends 'base_blog/base.html' %}
+{% block content %}
+
+
+<style>
+    #header.header-transparent {
+        background: #1e4356 !important;
+    }
+    
+        .breadcrumbs ol li + li::before {
+        display: inline-block;
+        padding-right: 10px;
+        padding-left: 10px;
+        color: #6c757d;
+        content: " / ";
+    }
+</style>
+
+{% block title %}
+دانش آزاد | {{title}}
+{% endblock title %}
+
+<main id="main">
+
+    <!-- ======= Contact Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>درباره</h2>
+          <ol>
+            <li><a href="{% url 'blog:home' %}">صفحه اصلی</a></li>
+            <li>درباره</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Contact Section -->
+
+    <!-- ======= Contact Section ======= -->
+    <section class="contact" data-aos="fade-up" data-aos-easing="ease-in-out" data-aos-duration="500">
+      <div class="container">
+
+      <div class="row">
+          <div class="col-lg-6">  
+              <h4>راجب دانش آزاد چی باید بدونیم؟</h4>
+            <p class="mt-3">
+                همونطور که درحال تحقیقات و خواندن مستندات درباره ی دانش برنامه نویسی و کامپیوتر و امنیت سیستم ها بودیم و داشتیم کار خود را ادامه میدادیم تصمیم بر ساختن سایتی با نام دانش آزاد شدیم، هدف از تشکیل این وبسایت همگانی کردن مقالاتی بود که تا قبل از آن در کانال تلگرامی مان میگذاشتیم که بازدید زیادی نداشت
+                بنابراین تصمیم گرفتیم این وبسایت را بنویسیم و فعالیتمون رو بیشتر کنیم تا بازدید کنندگان بیشتری از مطالب کاملا رایگان ما استفاده کنن
+                تلاش ما بر این است مطالب تخصصی بذاریم که در دیگر منابع فارسی کمیاب است یا اصلا وجود ندارد.
+            </p>
+            <h5 class="mt-6">ما از شما فقط حمایت میخواهیم!</h5>
+            <p class="mt-3">
+                تمامی مقالات و آموزش هایی که در وبسایت ما قرار گرفته میشود برایشان زحمت کشیده شده و زمان صرف شده است
+                پس اگر از وبسایت ما خوشتون اومد و از مقالات ما لذت بردید ما را 
+                <a href="{% url 'blog:contact' %}">حمایت</a>
+                 کنید تا فعالیت های ما بیشتر و آموزش ها با کیفیت تر شوند.
+            </p>
+        </div>
+        <div class="col-lg-6">
+          <div class="text-right text-outline-success">
+            <h4>دانش آزاد چه کاری برای شما انجام میدهد؟</h4>
+              <ul>
+                <li>
+                  <h5>آموزش تخصصی و به روز</h5>
+                  <p>دانش آزاد همیشه تلاش بر این دارد که مقالات و آموزش های تخصصی و به روز را برای شما عزیزان قراردهد تا کمبود آموزش های فارسی را بتوانیم کمی جبران کنیم</p>
+              </li>
+                  <li>
+                      <h5>حل سوالات شما</h5>
+                      <p>شما میتوانید با شبکه های اجتماعی رو به رو هر نوع سوالی در رابطه با موضوغ وبسایت داشتید با ما درمیون بگذارید تا بتونیم به شما کمک کنیم و مشکل شما رو حل کنیم</p>
+                  </li>
+                  <li>
+                      <h5>گزارش باگ</h5>
+                      <p>شما میتوانید در هنگام مشاهده باگ یا آسیب پذیری توسط شبکه های اجتماعی رو به رو به ما اطلاع دهید که در این صورت کمک بزرگی را به ما خواهید کرد</p>
+                  </li>
+              </ul>
+          </div>
+        </div>
+        </div>
+        <div class="text-bold text-center mt-4">
+          <h5>حمایت مالی</h5>
+          <p>اگر مطالب ما و آموزش های ما برای شما جذاب بود میتوانید ما را از لحاظ مالی حمایت کنید</p>
+            <div class="d-flex">
+              <div class="text-center">
+                  <h6>شماره کارت</h6>
+                  <p>شماره کارت</p>
+              </div>
+              <div class="text-center">
+                  <h6>درگاه پرداخت</h6>
+                  <p>درگاه پرداخت</p>
+              </div>
+            </div>
+            <p>از شما متشکریم :)</p>
+
+      </div>
+      </div>
+    </section><!-- End Contact Section -->
+
+    
+
+  </main><!-- End #main -->
+
+{% endblock %}

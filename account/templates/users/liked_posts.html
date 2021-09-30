@@ -1,0 +1,165 @@
+{% extends 'base/base.html' %} {% load static %} {% block content %}
+
+
+<script>
+
+
+
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
+    
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    
+    function clickKon(pk){
+        window._id = pk;
+        $("#exampleModal").modal('show');
+    }
+    
+    $(document).ready(function(){
+      $("#delete").click(()=>{
+          $.ajax({
+              url: "{% url 'account:article-like-delete' %}",
+              method: "post",
+              headers: {"X-CsrfToken": getCookie('csrftoken')},
+              data: {'id': window._id},
+              success: async function(response){
+                  if (response.success){
+                      
+                    var eleid = parseInt(window._id);
+                    // $(`#${eleid}`).css({'display': 'none'})  
+                    $(`#${eleid}`).hide('2000');
+    
+                      $("#exampleModal").modal('hide');
+                      $("#msg").addClass('alert alert-success').text('مقاله موردنظر حذف لایک شد.')
+                      $(document).scrollTop();
+                      await sleep(5000);
+                      $("#msg").removeClass('alert alert-danger').text('')
+                  }
+                  else if (response.permissionError){
+                      $('#exampleModal').modal('hide');
+                      $('#msg').addClass('alert alert-danger').text('این مقاله متعلق به شما نیست!')
+                  }
+              }
+          })
+      })
+    });
+    
+    </script>
+    
+        
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">مطمئنی میخوای این مقاله رو حذف لایک کنی؟</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                اگه حذفش کنی دوباره میتونی از صفحه مقالات اضافه اش کنی
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">لغو</button>
+              <button type="button" class="btn btn-danger" id="delete">حذف</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div id="msg"></div>
+        <div class="page-header">
+            <h3 class="page-title"> لیست مقالات لایک شده</h3>
+            <nav aria-label="breadcrumb" dir="ltr" class="text-right">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">داشبورد</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"> همه مقالات مورد علاقه</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">مقالات مورد علاقه</h4>
+                    <p class="card-description"> لیست مقالات مورد علاقه
+                    </p>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th> # </th>
+                                    <th> نام مقاله </th>
+                                    <th> توضیحات مقاله </th>
+                                    <th>دسته بندی مقاله</th>
+                                    <th>نویسنده مقاله</th>
+                                    <th>نیازمند لاگین</th>
+                                    <th>تاریخ انتشار</th>
+                                    <th>تاریخ ویرایش</th>
+                                    <th>مدیریت</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in all_posts %}
+                                <tr>
+                                    <div id="{{i.pk}}">
+
+                                        <td><img src="{{ i.image.url }}"></td>
+                                        <td> {{i.title}} </td>
+                                        <td>{{i.text|truncatechars:"20"}}</td>
+                                        <td>
+                                            {% for i in i.category.all %} {{i.title}} ، {% endfor %}
+                                        </td>
+                                        <td>{{i.author.username}}</td>
+                                        <td>{{i.login_required}}</td>
+                                        <td>{{i.jdate_cr}}</td>
+                                        <td>{{i.jdate_up}}</td>
+                                        <td>{{i.published}}</td>
+                                        <td>
+                                            <div class="text-center">
+                                                <button id="{{i.pk}}" class="btn btn-danger">حذف لایک</button>
+                                            </div>
+                                        </td>
+                                    </div>
+
+                                </tr>
+                                {% empty %}
+                                <p class="text-bold text-danger text-center">هنوز مقاله ای وجود ندارد.</p>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+                
+
+
+{% endblock %}

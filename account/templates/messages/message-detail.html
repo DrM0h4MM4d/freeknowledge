@@ -1,0 +1,36 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div id="msg"></div>
+      <div class="page-header">
+        <h3 class="page-title"> نمایش پیام  </h3>
+        <nav aria-label="breadcrumb" dir="ltr" class="text-right">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">داشبورد</a></li>
+            <li class="breadcrumb-item active" aria-current="page">نمایش پیام</li>
+          </ol>
+        </nav>
+      </div>
+      <div class="row">
+        
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">پیام </h4>
+              <p class="card-description"> جزیيات پیام را مشاهده میکنید: </p>
+              <h1><span class="text-bold text-success">عنوان:</span> {{message.title}}</h1>
+              <p><span class="text-bold text-success">توضیحات:</span> {{message.text}}</p>
+              {% if message.read %}
+              <p class="text-bold text-success">خوانده شده؟</p>  <input class="form-check-input" disabled checked type="checkbox" value=""><p class="mx-4 text-success">بله</p>
+              {% else %}
+              <p class="text-bold text-success">خوانده شده؟</p>  <input class="form-check-input" disabled type="checkbox" value=""><p class="mx-4 text-danger">خیر</p>
+                {% endif %}    
+            </div>
+            </div>
+        </div>
+
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base/base.html' %}
+{% block content %}
+{% load crispy_forms_tags  %}
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div id="msg"></div>
+    <div class="page-header">
+      <h3 class="page-title"> به روزرسانی پروفایل </h3>
+      <nav aria-label="breadcrumb" dir="ltr" class="text-right">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">پروفایل کاربری</a></li>
+          <li class="breadcrumb-item active" aria-current="page">ویرایش</li>
+        </ol>
+      </nav>
+    </div>
+    <div class="row">
+      
+      <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">به روز رسانی پروفایل کاربری</h4>
+            <p class="card-description"> اطلاعات خود را تغییر دهید </p>
+            <form class="forms-sample" enctype="multipart/form-data" method="POST">
+              {% csrf_token %}
+                  <div class="form-group">
+                    {{form|crispy}}  
+                  </div>
+                  <div class="col text-center">
+                    <input type="submit" class="btn btn-primary" value="ویرایش اطلاعات">                    
+                  </div>
+                </form>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+{% endblock %}

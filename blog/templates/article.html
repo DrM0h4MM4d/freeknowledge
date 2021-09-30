@@ -1,0 +1,345 @@
+{% extends 'base_blog/base.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load static %}
+<style>
+#header.header-transparent {
+    background: #1e4356 !important;
+}
+
+    .breadcrumbs ol li + li::before {
+    display: inline-block;
+    padding-right: 10px;
+    padding-left: 10px;
+    color: #6c757d;
+    content: " / ";
+}
+.alert-dismissible .btn-close {
+    position: absolute;
+    top: 0;
+    float: left;
+    left: 0;
+    z-index: 2;
+    /* padding: 1.25rem 1rem; */
+}
+</style>
+
+
+<script>
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
+    
+
+
+  // function Like(){
+    // console.log("Starting...")
+    // if ($("#ls").hasClass("like")){
+      // $("#ls").removeClass("like").addClass("like-active")
+    // }
+    // else{
+      // $("#ls").removeClass("like-active").addClass("like")
+    // }
+  // }
+
+
+function getNewInfoAboutLike(){
+  $.ajax({
+    type: "POST",
+    url: "{% url 'blog:likeupdate' %}",
+    headers: {
+      "X-CSRFToken": getCookie("csrftoken")
+    },
+    data: {"wal": "{{article.pk}}"},
+    success: function(response){
+      var likes = response.likes
+      $("#like").text(`Likes ${likes}`)
+    }
+  })
+}
+
+
+$(document).ready(
+  ()=>{
+    if ($("#ls").length == 0){
+      $(".tags").after('<div style="float: left;margin-right: auto;"><i onclick="Like()" class="far fa-heart"></i></div>')
+    }
+  }
+)
+
+
+function Like(){
+  {% if not request.user.is_authenticated %}
+  $("#null").html('<div class="alert alert-danger" role="alert">برای لایک کردن اول باید ثبت نام کنی! <a href=\'{% url "account:register" %}\'>ثبت نام</a></div>')
+  $(document).scrollTop(0);
+  {% else %}
+
+
+  $.ajax({
+    type: "POST",
+    url: "{% url 'blog:like' %}",
+    headers: {
+      "X-CSRFToken": getCookie("csrftoken")
+    },
+    data: {"id": "{{article.pk}}"},
+    success: function(response){
+      console.log(response)
+      if (response.liked){
+        $("#ls").removeClass("far fa-heart").addClass("fas fa-heart")
+        $("#null").html('<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>{{request.user.username}}</strong> شما این مقاله رو لایک کردی؛ از شما ممنونیم و میتوانید مقالات لایک شده خود را در داشبورد پیدا کنید.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>')
+        $(document).scrollTop(0)
+        getNewInfoAboutLike()
+      } 
+      else if (response.disliked){
+        $("#ls").removeClass("fas fa-heart").addClass("far fa-heart")
+        $("#null").html('<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>{{request.user.username}}</strong> شما لایک خود را حذف کردی :(.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>')
+        $(document).scrollTop(0)
+        getNewInfoAboutLike()
+      }
+    },
+    error: function (response) {
+                  // alert the error if any error occured
+                  console.log(response.responseJSON.errors)
+              }
+  })
+  {% endif %}
+}
+</script>
+
+
+{% block title %}
+دانش آزاد | {{title}}
+{% endblock title %}
+
+<main id="main">
+  <div id="null">
+
+  </div>
+
+    <!-- ======= Blog Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>{{article.title}}</h2>
+          <ol>
+            <li><a href="{% url 'blog:home' %}">صفحه اصلی</a></li>
+            <li><a>مقالات</a></li>
+            <li>{{article.title}}</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Blog Section -->
+
+    <!-- ======= Blog Single Section ======= -->
+    <section id="blog" class="blog">
+      <div class="container" data-aos="fade-up">
+        
+        <div class="row">
+          
+          <div class="col-lg-8 entries">
+            
+            {% if not article.login_required %}
+            <article class="entry entry-single">
+
+              <div class="entry-img">
+                <img src="{{article.image.url}}" alt="" class="img-fluid">
+              </div>
+
+              <h2 class="entry-title">
+                <a href="{% url 'blog:detail' article.slug %}">{{article.title}}</a>
+              </h2>
+
+              <div class="entry-meta">
+                <ul>
+                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="{{article.author.get_absolute_url}}">{{article.author}}</a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="#"><time datetime="2020-01-01">{{article.jdate_cr}}</time></a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="#">{{comments.count}} Comments</a></li>
+                  <li class="d-flex align-items-center"><i class="far fa-heart"></i> <a id="like" href="#">{{article.likes.count}} Likes</a></li>
+                </ul>
+              </div>
+
+              <div class="entry-content">
+                {{article.text}}
+              </div>
+
+              <div class="entry-footer d-flex">
+                <i class="bi bi-tags"></i>
+                {% for i in article.category.all %}
+                <ul class="tags">
+                  <li><a href="{{i.get_absolute_url}}">{{i.title}}</a></li>
+                </ul>
+                {% endfor %}
+            
+            {% if article.likes.all %}
+              {% for i in article.likes.all %}
+                {% if i.user == request.user %}
+                  <div style="float: left;margin-right: auto;">
+                    <a onclick="Like()"><i id="ls" class="fas fa-heart"></i></a>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+                    <!-- <div onclick="dislikeClicked()"><i id="dislike" class="dislike fas fa-thumbs-down"></i></div> -->
+            </div>
+
+            </article><!-- End blog entry -->
+            {% else %}
+            <article class="entry entry-single">
+
+              <div class="entry-img">
+                <img src="{{article.image.url}}" alt="" class="img-fluid">
+              </div>
+
+              <h2 class="entry-title">
+                <a href="{% url 'blog:detail' article.slug %}">{{article.title}}</a>
+              </h2>
+
+              <div class="entry-meta">
+                <ul>
+                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="{{article.author.get_absolute_url}}">{{article.author}}</a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="#"><time datetime="2020-01-01">{{article.jdate_cr}}</time></a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="#">{{comments.count}} Comments</a></li>
+                </ul>
+              </div>
+
+              <div class="entry-content">
+                <div class="text-center text-bold text-bold">
+                    <h5>برای خواندن این مقاله باید ثبت نام کنید</h5>
+                </div>
+                <div class="col">
+                  <div class="text-center">
+                    <a class="btn btn-primary" href="{% url 'account:register' %}">ثبت نام</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="entry-footer">
+                <i class="bi bi-tags"></i>
+                {% for i in article.category.all %}
+                <ul class="tags">
+                  <li><a href="{{i.get_absolute_url}}">{{i.title}}</a></li>
+                </ul>
+                {% endfor %}
+              </div>
+
+            </article><!-- End blog entry -->
+            {% endif %}
+
+            <div class="blog-author d-flex align-items-center">
+              {% if author.profile_pic %}
+              <img src="{{author.profile_pic.url}}" class="rounded-circle float-left mx-2" alt="{{author.username}}">
+              {% else %}
+              <img src="{% static 'assetz/img/anony-avatar.png' %}" class="rounded-circle float-left mx-2" alt="{{author.username}}">
+              {% endif %}
+              <div>
+                <h4>{{author.username}}</h4>
+                <div class="social-links">
+                    {% for i in author.contacts.all %}
+                  <a href="{{i.url}}"><i class="bi bi-twitter">{{i.title}}</i></a>
+                  <a href="https://facebook.com/#"><i class="bi bi-facebook"></i></a>
+                  <a href="https://instagram.com/#"><i class="biu bi-instagram"></i></a>
+                    {% endfor %}
+                </div>
+                <p>
+                  {{author.about}}
+                </p>
+              </div>
+            </div><!-- End blog author bio -->
+
+            <div class="blog-comments">
+            {% if comments %}
+            
+            <h4 class="comments-count">{{comments.count}} نظر</h4>
+            
+            <div id="{{comment.pk}}" class="comment">
+              {% for comment in comments %}
+              <div class="d-flex">
+                <!-- <div class="comment-img"><img src="assets/img/blog/comments-1.jpg" alt=""></div> -->
+                  <div>
+                    <h5><a href="">{{comment.from_user.username}}</a></h5>
+                    <time datetime="2020-01-01">{{comment.jdate_cr}}</time>
+                    <h5>{{comment.title}}</h5>
+                    <p>
+                        {{comment.text}}
+                    </p>
+                  </div>
+                </div>
+                {% endfor %}
+              {% endif %}
+
+              <div class="reply-form">
+                <h4>نظرتو بنویس!</h4>
+                <!-- <p>ایمیل شما به نمایش درنمی آید فقط برای تایید شما الزامیست </p> -->
+                <form method="POST">
+                    {% csrf_token %}
+                    {{form|crispy}}
+                  <button type="submit" class="btn btn-primary mt-2">ارسال نظر</button>
+
+                </form>
+
+              </div>
+
+              </div><!-- End blog comments -->
+            </div>
+          <!-- </div> 
+          </div> -->
+
+          <div class="col-lg-4">
+
+            <div class="sidebar">
+
+              <h3 class="sidebar-title">جستجو</h3>
+              <div class="sidebar-item s-s search-form">
+                <form action="{% url 'blog:search' %}" method="POST">
+                  {% csrf_token %}
+                  <input type="text" name="title">
+                  <button type="submit"><i class="bi bi-search"></i></button>
+                </form>
+              </div><!-- End sidebar search formn-->
+              <h3 class="sidebar-title">دسته بندیها</h3>
+              {% if categories %}
+              <div class="sidebar-item categories d-inline">
+                <ul>
+                  {% for i in categories %}
+                    <li><a class="btn btn-primary btn-sm" href="#">{{i.title}} </a></li>
+                {% endfor %}
+              </ul>
+            </div><!-- End sidebar categories-->
+            {% endif %}
+
+
+              <h3 class="sidebar-title">پست های اخیر</h3>
+              {% for i in last_articles %}
+              <div class="sidebar-item recent-posts">
+                <div class="post-item clearfix">
+                  <!-- <img src="{{i.image.url}}" alt=""> -->
+                  <h4><a href="{{i.get_absolute_url}}">{{i.title}}</a></h4>
+                  <time datetime="2020-01-01">{{i.jdate_cr}}</time>
+                </div>
+              {% endfor %}
+            </div><!-- End sidebar -->
+
+          </div><!-- End blog sidebar -->
+
+        </div>
+
+      </div>
+    </section><!-- End Blog Single Section -->
+
+  </main><!-- End #main -->
+  {% endblock %}
+

@@ -1,0 +1,148 @@
+{% load crispy_forms_tags %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fa">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>دانش آزاد | ثبت نام</title>
+    <script src="{% static 'assets/js/jquery.js' %}"></script>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="{% static 'assets/css/rtl.css' %}">
+
+
+    <script> 
+    $(document).ready(function () {
+      $('#id_username').keyup(function () {
+          $.ajax({
+              data: $(this).serialize(), // get the form data
+              url: "{% url 'account:validator-username' %}",
+              // on success
+              success: function (response) {
+                
+                  if (response.is_taken == true) {
+                    if ($("#usernameError").length == 0){
+                      $('#id_username').removeClass('is-valid').addClass('is-invalid');
+                      $('#id_username').after('<div class="invalid-feedback d-block" id="usernameError">کاربری با این نام کاربری وجود دارد!</div>')
+                  }
+                }
+                  else {
+                      $('#id_username').removeClass('is-invalid').addClass('is-valid');
+                      $('#usernameError').remove();
+
+                  }
+
+              },
+              // on error
+              error: function (response) {
+                  // alert the error if any error occured
+                  console.log(response.responseJSON.errors)
+              }
+          });
+
+          return false;
+      });
+  })
+  $(document).ready(function () {
+            // catch the form's submit event
+            $('#id_email').keyup(function () {
+                // create an AJAX call
+                $.ajax({
+                    data: $(this).serialize(), // get the form data
+                    url: "{% url 'account:validator-email' %}",
+                    // on success
+                    success: function (response) {
+                        if (response.taken == true) {
+                          if ($("#emailError").length == 0){
+                            $('#id_email').removeClass('is-valid').addClass('is-invalid');
+                            $('#id_email').after('<div class="invalid-feedback d-block" id="emailError">این آدرس ایمیل موجود است.</div>')
+                            if ($("#tst").length == 0){
+                              $("#main-btn").after('<a id="tst" href=\"{% url "account:active-again" %}\">ارسال دوباره لینک</a>')
+                            }
+                          }
+                        }
+                        else if (response.correct == false) {
+                          if ($("#emailVerError").length == 0){
+                            $('#id_email').removeClass('is-valid').addClass('is-invalid');
+                            $('#id_email').after('<div class="invalid-feedback d-block" id="emailVerError">این آدرس ایمیل اشتباه است.</div>')
+                          }
+                        }
+                        else if (response.correct == true) {
+                            $('#id_email').removeClass('is-invalid').addClass('is-valid');
+                            $('#emailError').remove();
+                            $("#emailVerError").remove();
+                        }
+
+                    },
+                    // on error
+                    error: function (response) {
+                        // alert the error if any error occured
+                        console.log(response.responseJSON.errors)
+                    }
+                });
+
+                return false;
+            });
+        })
+    </script>
+
+    <!-- End layout styles -->
+  </head>
+
+  
+  <body class="rtl text-right" style="background-image: url('https://github.com/BootstrapDash/corona-free-dark-bootstrap-admin-template/blob/master/template/assets/images/auth/Login_bg.jpg')">
+    <div class="container-scroller">
+      <div class="container-fluid page-body-wrapper full-page-wrapper">
+        <div class="row w-100 m-0">
+          <div class="content-wrapper full-page-wrapper d-flex align-items-center auth login-bg">
+            <div class="card col-lg-4 mx-auto">
+              <div class="card-body px-5 py-5">
+                <h3 class="text-right card-title text-left mb-3">ثبت نام</h3>
+
+                <form method="POST">{% csrf_token %}
+                  <div class="form-group">
+
+                    {{form|crispy}}
+                  </div>
+                  <div id="main-btn" class="text-center">
+                    <button type="submit" class="btn btn-primary btn-block enter-btn" >ثبت نام</button>
+                </div>
+                  <p class="sign-up text-center">اکانت دارید؟<a href="{% url 'account:login' %}">وارد شوید</a></p>
+                  <p class="terms">با ساخت اکانت شما  <a href="#"> قوانین و ضوابط</a> را قبول کردید </p>
+                </form>
+              </div>
+            </div>
+          </div>
+          <!-- content-wrapper ends -->
+        </div>
+        <!-- row ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="{% static 'assets/vendors/js/vendor.bundle.base.js' %}"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="{% static 'assets/js/off-canvas.js' %}"></script>
+    <script src="{% static 'assets/js/hoverable-collapse.js' %}"></script>
+    <script src="{% static 'assets/js/misc.js' %}"></script>
+    <script src="{% static 'assets/js/settings.js' %}"></script>
+    <script src="{% static 'assets/js/todolist.js' %}"></script>
+    <!-- endinject -->
+
+  </body>
+</html>

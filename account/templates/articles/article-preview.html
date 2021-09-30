@@ -1,0 +1,215 @@
+{% extends 'base_blog/base.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load static %}
+<style>
+#header.header-transparent {
+    background: #1e4356 !important;
+}
+
+    .breadcrumbs ol li + li::before {
+    display: inline-block;
+    padding-right: 10px;
+    padding-left: 10px;
+    color: #6c757d;
+    content: " / ";
+}
+.alert-dismissible .btn-close {
+    position: absolute;
+    top: 0;
+    float: left;
+    left: 0;
+    z-index: 2;
+    /* padding: 1.25rem 1rem; */
+}
+
+
+
+
+</style>
+<main id="main">
+  <div id="null">
+
+  </div>
+
+    <!-- ======= Blog Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>{{article.title}}</h2>
+
+          <ol>
+            <li><a href="{% url 'blog:home' %}">صفحه اصلی</a></li>
+            <li><a>مقالات</a></li>
+            <li>{{article.title}}</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Blog Section -->
+
+    <!-- ======= Blog Single Section ======= -->
+    <section id="blog" class="blog">
+      <div class="container" data-aos="fade-up">
+        
+        <div class="row">
+          
+          <div class="col-lg-8 entries">
+            {% if not article.login_required or user.is_authenticated %}
+            <article class="entry entry-single">
+
+              <div class="entry-img">
+                <img src="{{article.image.url}}" alt="" class="img-fluid">
+              </div>
+
+              <h2 class="entry-title">
+                <a href="{% url 'blog:detail' article.slug %}">{{article.title}}</a>
+              </h2>
+
+              <div class="entry-meta">
+                <ul>
+                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="{{article.author.get_absolute_url}}">{{article.author}}</a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="#"><time datetime="2020-01-01">{{article.jdate_cr}}</time></a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="#">{{article.comments.count}} Comments</a></li>
+                  <li class="d-flex align-items-center"><i class="far fa-heart"></i> <a id="like" href="#">{{article.likes.count}} Likes</a></li>
+                </ul>
+              </div>
+
+              <div class="entry-content">
+                {{article.text}}
+              </div>
+
+              <div class="entry-footer d-flex">
+                <i class="bi bi-tags"></i>
+                {% for i in article.category.all %}
+                <ul class="tags">
+                  <li><a href="{{i.get_absolute_url}}">{{i.title}}</a></li>
+                </ul>
+                {% endfor %}
+            
+            {% if article.likes.all %}
+              {% for i in article.likes.all %}
+                {% if i.user == request.user %}
+                  <div style="float: left;margin-right: auto;">
+                    <a onclick="Like()"><i id="ls" class="fas fa-heart"></i></a>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+                    <!-- <div onclick="dislikeClicked()"><i id="dislike" class="dislike fas fa-thumbs-down"></i></div> -->
+            </div>
+
+            </article><!-- End blog entry -->
+            {% else %}
+            <article class="entry entry-single">
+
+              <div class="entry-img">
+                <img src="{{article.image.url}}" alt="" class="img-fluid">
+              </div>
+
+              <h2 class="entry-title">
+                <a href="{% url 'blog:detail' article.slug %}">{{article.title}}</a>
+              </h2>
+
+              <div class="entry-meta">
+                <ul>
+                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="{{article.author.get_absolute_url}}">{{article.author}}</a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="#"><time datetime="2020-01-01">{{article.jdate_cr}}</time></a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="#">{{article.comments.count}} Comments</a></li>
+                </ul>
+              </div>
+
+              <div class="entry-content">
+                <div class="text-center text-bold text-bold">
+                    <h5>برای خواندن این مقاله باید ثبت نام کنید</h5>
+                </div>
+                <div class="col">
+                  <div class="text-center">
+                    <a class="btn btn-primary" href="{% url 'account:register' %}">ثبت نام</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="entry-footer">
+                <i class="bi bi-tags"></i>
+                {% for i in article.category.all %}
+                <ul class="tags">
+                  <li><a href="{{i.get_absolute_url}}">{{i.title}}</a></li>
+                </ul>
+                {% endfor %}
+              </div>
+
+            </article><!-- End blog entry -->
+            {% endif %}
+
+            <div class="blog-author d-flex align-items-center">
+              {% if article.author.profile_pic %}
+              <img src="{{article.author.profile_pic.url}}" class="rounded-circle float-left mx-2" alt="{{author.username}}">
+              {% else %}
+              <img src="{% static 'assetz/img/anony-avatar.png' %}" class="rounded-circle float-left mx-2" alt="{{author.username}}">
+              {% endif %}
+              <div>
+                <h4>{{article.author.username}}</h4>
+                <div class="social-links">
+                    {% for i in article.author.contacts.all %}
+                  <a href="{{i.url}}"><i class="bi bi-twitter">{{i.title}}</i></a>
+                  <a href="https://facebook.com/#"><i class="bi bi-facebook"></i></a>
+                  <a href="https://instagram.com/#"><i class="biu bi-instagram"></i></a>
+                    {% endfor %}
+                </div>
+                <p>
+                  {{article.author.about}}
+                </p>
+              </div>
+              </div>
+            </div><!-- End blog author bio -->
+
+          <!-- </div> 
+          </div> -->
+
+          <div class="col-lg-4">
+
+            <div class="sidebar">
+
+              <h3 class="sidebar-title">جستجو</h3>
+              <div class="sidebar-item s-s search-form">
+                <form action="{% url 'blog:search' %}" method="POST">
+                  {% csrf_token %}
+                  <input type="text" name="title">
+                  <button type="submit"><i class="bi bi-search"></i></button>
+                </form>
+              </div><!-- End sidebar search formn-->
+              <h3 class="sidebar-title">دسته بندیها</h3>
+              {% if categories %}
+              <div class="sidebar-item categories d-inline">
+                <ul>
+                  {% for i in categories %}
+                    <li><a class="btn btn-primary btn-sm" href="#">{{i.title}} </a></li>
+                {% endfor %}
+              </ul>
+            </div><!-- End sidebar categories-->
+            {% endif %}
+
+
+              <h3 class="sidebar-title">پست های اخیر</h3>
+              {% for i in last_articles %}
+              <div class="sidebar-item recent-posts">
+                <div class="post-item clearfix">
+                  <!-- <img src="{{i.image.url}}" alt=""> -->
+                  <h4><a href="{{i.get_absolute_url}}">{{i.title}}</a></h4>
+                  <time datetime="2020-01-01">{{i.date_cr}}</time>
+                </div>
+              {% endfor %}
+            </div><!-- End sidebar -->
+
+          </div><!-- End blog sidebar -->
+
+        </div>
+
+      </div>
+    </section><!-- End Blog Single Section -->
+
+  </main><!-- End #main -->
+  {% endblock %}
+

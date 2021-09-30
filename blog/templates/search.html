@@ -1,0 +1,151 @@
+{% extends 'base_blog/base.html' %}
+{% block content %}
+<style>
+  #header.header-transparent {
+      background: #1e4356 !important;
+  }
+  
+      .breadcrumbs ol li + li::before {
+      display: inline-block;
+      padding-right: 10px;
+      padding-left: 10px;
+      color: #6c757d;
+      content: " / ";
+  }
+  </style>
+
+
+{% block title %}
+دانش آزاد | {{title}}
+{% endblock title %}
+
+<main id="main">
+
+    <!-- ======= Blog Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>نتایج جستجو</h2>
+
+          <ol>
+            <li><a href="index.html">صفحه اصلی</a></li>
+            <li>نتایج جستجو</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Blog Section -->
+
+    <!-- ======= Blog Section ======= -->
+    <section id="blog" class="blog">
+      <div class="container" data-aos="fade-up">
+
+        <div class="row">
+
+          <div class="col-lg-8 entries">
+
+        {% for i in articles %}
+            <article class="entry">
+
+              <div class="entry-img">
+                <img src="{{i.image.url}}" alt="{{i.title}}" class="img-fluid">
+              </div>
+
+              <h2 class="entry-title">
+                <a href="{{i.get_absolute_url}}">{{i.title}}</a>
+              </h2>
+
+              <div class="entry-meta">
+                <ul>
+                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="{{i.author.get_absolute_url}}">{{i.author}}</a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="{{i.get_absolute_url}}"><time datetime="2020-01-01">{{i.jdate_cr}}</time></a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="{{i.get_absolute_url}}">{{i.comment_set.count}} Comments</a></li>
+                  <li class="d-flex align-items-center"><i class="far fa-heart"></i> <a id="like" href="{{i.get_absolute_url}}">{{i.likes.count}} Likes</a></li>
+              </ul>
+              </div>
+
+              <div class="entry-content">
+                <p>
+                    {{i.text|truncatechars:"200"}}
+                </p>
+                <div class="read-more">
+                  <a href="{{i.get_absolute_url}}">بیشتر بخوانید</a>
+                </div>
+              </div>
+
+            </article><!-- End blog entry -->
+            {% empty %}
+            <p>متاسفانه نتیجه ای پیدا نشد</p>
+            {% endfor %}
+
+            <div class="blog-pagination">
+              <!-- <ul class="justify-content-center">
+                <li><a href="#">1</a></li>
+                <li class="active"><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+              </ul> -->
+            <ul class="justify-content-center">
+              {% if page_obj.has_previous %}
+                <li><a href="?page=1">1</a></li>
+                <a href="?page={{ page_obj.previous_page_number }}">{{page_obj.page_number}}</a>
+              {% endif %}
+              
+                <li class="active">{{page_obj.number}}</li>
+
+          
+              {% if page_obj.has_next %}
+                <li><a href="?page={{ page_obj.next_page_number }}">{{page_obj.page_number}}}</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">{{page_obj.paginator.num_pages}}</a>
+              {% endif %}
+            </ul>
+            </div>
+
+          </div><!-- End blog entries list -->
+
+          <div class="col-lg-4">
+
+            <div class="sidebar">
+
+                <h3 class="sidebar-title">جستجو</h3>
+                <div class="sidebar-item s-s search-form">
+                  <form action="{% url 'blog:search' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="title">
+                    <button type="submit"><i class="bi bi-search"></i></button>
+                  </form>
+                </div><!-- End sidebar search formn-->
+  
+  
+                <h3 class="sidebar-title">دسته بندیها</h3>
+                {% if categories %}
+                <div class="sidebar-item categories d-inline">
+                  <ul>
+                    {% for i in categories %}
+                      <li><a class="btn btn-primary btn-sm" href="#">{{i.title}} </a></li>
+                  {% endfor %}
+                </ul>
+              </div><!-- End sidebar categories-->
+              {% endif %}
+    
+  
+                <h3 class="sidebar-title">پست های اخیر</h3>
+                {% for i in posts %}
+                <div class="sidebar-item recent-posts">
+                  <div class="post-item clearfix">
+                    <!-- <img src="{{i.image.url}}" alt=""> -->
+                    <h4><a href="{{i.get_absolute_url}}">{{i.title}}</a></h4>
+                    <!-- <time datetime="{{i.date_cr}}">{{i.date_cr}}</time> -->
+                  </div>
+                {% endfor %}
+              </div><!-- End sidebar -->
+  
+            </div><!-- End blog sidebar -->
+
+        </div>
+
+      </div>
+    </section><!-- End Blog Section -->
+
+  </main><!-- End #main -->
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends 'base_blog/base.html' %}
+{% load static %}
+
+
+{% block title %}
+دانش آزاد | {{titlex}}
+{% endblock %}
+
+{% block content %}
+
+<style>
+  button-section{
+    height: 200px;
+    width: 100%;
+  }
+  .services .icon-box-primary:hover {
+    border-color: #00b8ff;
+}
+.services .icon-box-warning:hover {
+    border-color: #dae90e;
+}
+.services .icon-box-danger:hover {
+    border-color: #e92d4c;
+}
+.services .icon-box-dark:hover {
+    border-color: #252525;
+}
+.services .icon-box-success:hover {
+    border-color: #00ff4c;
+}
+</style>
+
+
+
+  <!-- ======= Hero Section ======= -->
+  <section id="hero" class="d-flex justify-cntent-center align-items-center">
+    <div id="heroCarousel" class="container carousel carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+
+      <!-- Slide 1 -->
+      <div class="carousel-item active">
+        <div class="carousel-container">
+          <h2 class="animate__animated animate__fadeInDown">خوش آمدید به <span>دانش آزاد</span></h2>
+          <p class="animate__animated animate__fadeInUp">سایت ما به شما کمک میکند تا به صورت رایگان با حوزه های کامپیوتر آشنا شوید و آنها را یادبگیرید.</p>
+          <a href="{% url 'blog:posts' %}" class="btn-get-started animate__animated animate__fadeInUp">بیشتر بخوانید</a>
+        </div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="carousel-item">
+        <div class="carousel-container">
+          <h2 class="animate__animated animate__fadeInDown">همکاری با ما</h2>
+          <p class="animate__animated animate__fadeInUp">با ما همکاری کنید و در وبسایت ما به عنوان یک نویسنده مقاله ها و آموزش هایتان را بنویسید.</p>
+          <a href="{% url 'account:register' %}" class="btn-get-started animate__animated animate__fadeInUp">بیشتر بخوانید</a>
+        </div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="carousel-item">
+        <div class="carousel-container">
+          <h2 class="animate__animated animate__fadeInDown">چالش ها</h2>
+          <p class="animate__animated animate__fadeInUp">ما برای شما چالش هایی را طراحی میکنیم تا با آنها اطلاعات خود را به چالش بکشید.</p>
+          <a href="" class="btn-get-started animate__animated animate__fadeInUp">بیشتر بخوانید</a>
+        </div>
+      </div>
+
+      <a class="carousel-control-prev" href="#heroCarousel" role="button" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon bx bx-chevron-left" aria-hidden="true"></span>
+      </a>
+
+      <a class="carousel-control-next" href="#heroCarousel" role="button" data-bs-slide="next">
+        <span class="carousel-control-next-icon bx bx-chevron-right" aria-hidden="true"></span>
+      </a>
+
+    <!-- </div> -->
+  </section><!-- End Hero -->
+
+  <main id="main">
+
+    <!-- ======= Services Section ======= -->
+    <section class="services">
+      <div class="container">
+
+      <div class="row">
+        {% for i in categories %}
+        {% if not i.parent %}
+          <div class="col-md-6 col-lg-3 d-flex align-items-stretch" data-aos="fade-up">
+            <div class="icon-box icon-box-{{i.color}}">
+              {% if i.slug == 'network' %}
+              <div class="icon"><i class="icofont-network"></i></div>
+              {% elif i.slug == 'penetration-testing' %}
+              <div class="icon"><i class="bx bxl-dribbble"></i></div>
+              {% elif i.slug == 'programming' %}
+              <div class="icon"><i class="icofont-cube"></i></div>
+              {% elif i.slug == 'operation-systems' %}
+              <div class="icon"><i class="icofont-laptop-alt"></i></div>
+              {% elif i.slug == 'ai' %}
+              <div class="icon"><i class="icofont-brainstorming"></i></div>
+              {% endif %}
+              <h4 class="title"><a href="{{i.get_absolute_url}}">{{i.title}}</a></h4>
+              <p class="description">{{i.desc}}</p>
+              <div class="button-section">
+                <a href="{{i.get_absolute_url}}" class="btn btn-{{i.color}} btn-sm mt-2 mb-0" >مشاهده مقالات</a>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        {% endfor %}
+      
+        </div>
+
+      </div>
+    </section>
+
+
+
+    <div class="latest-post mb-5 mt-5">
+        <h2 class="text-center text-bold">
+          مقالات اخیر
+        </h2>
+    </div>
+
+    
+    <section class="service-details">
+      <div class="container">
+        
+        <div class="row">
+          {% for i in posts %}
+          <div class="col-md-4 d-flex align-items-stretch" data-aos="fade-up">
+            <div class="card">
+              <div class="card-img">
+                <img src="{{ i.image.url }}" alt="{{i.title}}">
+              </div>
+              <div class="card-body">
+                <h5 class="card-title"><a href="{{i.get_absolute_url}}">{{i.title}}</a></h5>
+                <p class="card-text">{{i.text|truncatechars:"200"}}</p>
+                <div class="entry-meta">
+                  <ul>
+                    <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="{{i.author.get_absolute_url}}">{{i.author}}</a></li>
+                    <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="{{i.get_absolute_url}}"><time datetime="2020-01-01">{{i.jdate_cr}}</time></a></li>
+                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="{{i.get_absolute_url}}">{{i.comment_set.count}} Comments</a></li>
+                    <li class="d-flex align-items-center"><i class="far fa-heart"></i> <a id="like" href="{{i.get_absolute_url}}">{{i.likes.count}} Likes</a></li>
+                </ul>
+              </div><div class="read-more"><a href="{{i.get_absolute_url}}"><i class="bi bi-arrow-right"></i> بیشتر بخوانید</a></div>
+              </div>
+            </div>
+          </div>
+            {% endfor %}
+        </div>
+      </div>
+  </section>
+
+  </main><!-- End #main -->
+{% endblock %}

@@ -1,0 +1,7 @@
+
+{% autoescape off %}
+سلام {{ user.username }},
+از شما متشکریم که در وبسایت ما ثبت نام کردی!
+برای تایید اکانت خود به روی کلید زیر کلیک کنید
+https://{{ domain }}{% url 'account:activate' uidb64=uid token=token %}
+{% endautoescape %}

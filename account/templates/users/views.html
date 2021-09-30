@@ -1,0 +1,157 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+
+
+<script>
+
+
+
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
+  
+      function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+  
+  function clickKon(pk){
+      console.log("Hi")
+      window._id = pk;
+      $("#exampleModal").modal('show');
+  }
+  
+  $(document).ready(function(){
+    $("#delete").click(()=>{
+        $.ajax({
+            url: "{% url 'account:view-delete' %}",
+            method: "post",
+            headers: {"X-CsrfToken": getCookie('csrftoken')},
+            data: {'id': window._id},
+            success: async function(response){
+                if (response.success){
+                    
+                  var eleid = parseInt(window._id);
+                  // $(`#${eleid}`).css({'display': 'none'})  
+                  $(`#${eleid}`).hide('2000');
+  
+                    $("#exampleModal").modal('hide');
+                    $("#msg").addClass('alert alert-success').text('اعلان موردنظر حذف شد.')
+                    $(document).scrollTop();
+                    await sleep(5000);
+                    $("#msg").removeClass('alert alert-danger').text('')
+                }
+                else if (response.permissionError){
+                    $('#exampleModal').modal('hide');
+                    $('#msg').addClass('alert alert-danger').text('این اعلان متعلق به شما نیست!')
+                }
+            }
+        })
+    })
+  });
+  
+  </script>
+  
+
+<!-- aria-labelledby="exampleModalLabel" aria-hidden="true" -->
+  
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">مطمئنی میخوای این بازدید رو حذف کنی؟</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          اگه حذفش کنی دیگه نمیتونی برش گردونی دوست عزیز!
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">لغو</button>
+        <button type="button" class="btn btn-danger" id="delete">حذف</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div id="msg">
+
+      </div>
+      <div class="page-header">
+        <h3 class="page-title"> بازدید ها </h3>
+        <nav aria-label="breadcrumb" dir="ltr" class="text-right">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">داشبورد</a></li>
+            <li class="breadcrumb-item active" aria-current="page">همه بازدید ها</li>
+          </ol>
+        </nav>
+      </div>
+      <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">بازدیدها</h4>
+            <p class="card-description"> همه بازدید ها
+            </p>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th> # </th>
+                            <th> ایپی بازدید کننده </th>
+                            <th> یوزر ایجنت بازدید کننده  </th>
+                            <th> تاریخ بازدید </th>
+                            <td>
+                                بررسی بازدید
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                {% for i in views %}
+                  <tr id="{{i.pk}}">
+                      <td>{{i.pk}}</td>
+                      <td>{{ i.ip_addr }}</td>
+                    <td> {{i.ua}} </td>
+                    <!-- <td> -->
+                      <!-- <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div> -->
+                    <!-- </td> -->
+                    <td>{{ i.jdate }}</td>
+                    <td>
+                        <div class="text-center">
+                          <button type="button" onclick="clickKon('{{i.pk}}');" class="btn btn-danger btn-sm" value="{{i.pk}}" id="myBtn">حذف</button>
+                          <!-- <a class="btn btn-sm btn-success" href="{% url 'account:article-preview' i.pk %}">پیش نمایش </a> -->
+                        </div>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <p class="text-bold text-danger text-center">هنوز بازدیدی وجود ندارد.</p>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

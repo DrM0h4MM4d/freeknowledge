@@ -1,0 +1,749 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa">
+
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>صفحه مدیریت</title>
+        <!-- plugins:css -->
+        <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}">
+        <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}">
+        <!-- endinject -->
+        <!-- Plugin css for this page -->
+        <link rel="stylesheet" href="{% static 'assets/vendors/jvectormap/jquery-jvectormap.css' %}">
+        <link rel="stylesheet" href="{% static 'assets/vendors/flag-icon-css/css/flag-icon.min.css' %}">
+        <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.carousel.min.css' %}">
+        <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.theme.default.min.css' %}">
+        <script src="{% static 'assets/js/jquery.js' %}"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <!-- End plugin css for this page -->
+        <!-- inject:css -->
+        <!-- endinject -->
+        <!-- Layout styles -->
+        <link rel="stylesheet" href="{% static 'assets/css/rtl.css' %}">
+        <!-- End layout styles -->
+
+    </head>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function openTheModal(){
+        $("#exampleModalMain").modal("show");
+    }
+
+    function readThisNotif(pk) {
+        $.ajax({
+            url: "{% url 'account:notif-read' %}",
+            headers: {
+                "X-CsrfToken": getCookie("csrftoken")
+            },
+            method: "POST",
+            data: {
+                'pk': pk
+            },
+            success: function(response) {
+                if (response.read) {
+                    $("#dx").hide(300);
+                }
+            }
+        })
+    }
+
+    $(document).ready(() => {
+        $("#author-req").click(() => {
+            $.ajax({
+                url: "{% url 'account:author-req' %}",
+                method: "POST",
+                headers: {
+                    "X-CsrfToken": getCookie("csrftoken")
+                },
+                data: {
+                    'id': '{{user.pk}}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $("#msg").addClass("alert alert-success").text("درخواست شما به عنوان پیام به ادمین ارسال شد میتونید نتایج این درخواست رو از قسمت پیام ها دنبال کنید")
+                    }
+                }
+            })
+        })
+
+    $("#deleteMyAccount").click(()=>{
+        $.ajax({
+            url: "{% url 'account:delete' %}",
+            method: "post",
+            headers: {
+                "X-CsrfToken": getCookie("csrftoken")
+            },
+            data: {"id": "{{user.pk}}"},
+            success: function(response){
+                if (response.success){
+                    document.location.href = '/';
+                }
+            
+            }
+        })
+    })
+    if ($("#abcdefg").length == 0) {
+            $("#xa").after('<div class="dropdown-divider"></div><a class="dropdown-item preview-item"><div class="preview-thumbnail"><div class="d-flex"><div class="preview-icon bg-dark rounded-circle"><i class="fas fa-check text-primary"></i></div><div class="preview-item-content" style="width: 400px;"><p class="preview-subject mb-1">اعلانی وجود ندارد</p><p class="text-muted  mb-0">همه اعلان ها خوانده شده اند</p></div></div></div></a>')
+    }
+    })
+
+</script>
+
+
+
+
+
+
+<div class="modal fade" id="exampleModalMain" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">مطمئنی میخوای اکانتتو حذف کنی؟</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            دوست عزیز اگه اکانتت پاک بشه تموم اطلاعات مربوط به شما از دیتابیس ما پاک میشود
+            بنابراین بار دیگر باید با اکانت دیگری ورود کنید
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">لغو</button>
+          <button type="button" class="btn btn-danger" id="deleteMyAccount">حذف</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+<body class="rtl">
+    <div class="container-scroller">
+        <!-- partial:partials/_sidebar.html -->
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
+                <a class="sidebar-brand brand-logo" href="{% url 'account:dashboard' %}"><img src="" alt="logo" /></a>
+                <a class="sidebar-brand brand-logo-mini" href="{% url 'account:dashboard' %}"><img src="" alt="logo" /></a>
+            </div>
+            <ul class="nav">
+                <li class="nav-item profile">
+                    <div class="profile-desc">
+                        <div class="profile-pic">
+                            <div class="count-indicator">
+                                {% if user.profile_pic %}
+                                <img class="img-xs rounded-circle " src="{{user.profile_pic.url}}" alt=""> {% else %}
+                                <img class="img-xs rounded-circle " src="{% static 'assetz/img/anony-avatar.png' %}" alt=""> {% endif %}
+                                <span class="count bg-success"></span>
+                            </div>
+                            <div class="profile-name">
+                                <h5 class="mb-0 font-weight-normal">{{user.username}}</h5>
+                                {% if user.is_superuser %}
+                                <span>ادمین وبسایت</span> {% elif user.is_author %}
+                                <span>نویسنده وبسایت</span> {% elif not user.is_superuser and not user.is_author and user.is_active %}
+                                <span>کاربر وبسایت</span> {% endif %}
+                            </div>
+                        </div>
+                        <a href="#" id="profile-dropdown" data-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
+                        <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list" aria-labelledby="profile-dropdown">
+                            <a href="{% url 'account:update' user.pk %}" class="dropdown-item preview-item">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-dark rounded-circle">
+                                        <i class="mdi mdi-settings text-primary"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content">
+                                    <p class="preview-subject ellipsis mb-1 text-small">تنظیمات</p>
+                                </div>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            {% if user.is_superuser or user.is_author %}
+                            <a href="{% url 'account:article-create' %}" class="dropdown-item preview-item">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-dark rounded-circle">
+                                        <i class="mdi mdi mdi-buffer text-success"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content">
+                                    <p class="preview-subject ellipsis mb-1 text-small">افزودن مقاله جدید</p>
+                                </div>
+                            </a>
+                            {% elif user.is_active %}
+                            <a id="author-req" class="dropdown-item preview-item">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-dark rounded-circle">
+                                        <i class="mdi mdi-account-check text-success"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content">
+                                    <p class="preview-subject ellipsis mb-1 text-small">درخواست نویسندگی</p>
+                                </div>
+                            </a>
+                            {% endif %}
+                            <div class="dropdown-divider"></div>
+                            <a href="{% url 'account:password_change' %}" class="dropdown-item preview-item">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-dark rounded-circle">
+                                        <i class="mdi mdi-alert-octagon text-warning"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content">
+                                    <p class="preview-subject ellipsis mb-1 text-small">تغییر پسورد</p>
+                                </div>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="{% url 'account:logout' %}" class="dropdown-item preview-item">
+                            
+
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-dark rounded-circle">
+                                        <i class="mdi mdi-account-remove text-secondary"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content">
+                                    <p class="preview-subject ellipsis mb-1 text-small">خارج شدن</p>
+                                </div>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a onclick="openTheModal()" class="dropdown-item preview-item">
+
+
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-dark rounded-circle">
+                                        <i class="mdi mdi-logout text-danger"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content">
+                                    <p class="preview-subject ellipsis mb-1 text-small">حذف اکانت</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+                {% if user.is_superuser %}
+                <li class="nav-item nav-category">
+                    <span class="nav-link">پنل مدیریت</span>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'account:dashboard' %}">
+                        <span class="menu-icon">
+                <i class="mdi mdi-speedometer"></i>
+              </span>
+                        <span class="menu-title">داشبورد</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#posts" aria-expanded="false" aria-controls="posts">
+                        <span class="menu-icon">
+                <i class="mdi mdi mdi-buffer"></i>
+              </span>
+                        <span class="menu-title">مقالات</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="posts">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:article-create' %}">افزودن</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:articles'  %}">مشاهده همه</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#contacts" aria-expanded="false" aria-controls="posts">
+                        <span class="menu-icon">
+                <i class="mdi mdi-google-circles-extended "></i>
+              </span>
+                        <span class="menu-title">راه های ارتباطی من</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="contacts">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:contact-create' %}">افزودن</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:contacts'  %}">مشاهده همه</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#cats" aria-expanded="false" aria-controls="cats">
+                        <span class="menu-icon">
+                <i class="mdi mdi-checkbox-multiple-blank"></i>
+              </span>
+                        <span class="menu-title">دسته بندیها</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="cats">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:category-create' %}">افزودن</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:categories' %}">مشاهده همه</a></li>
+                            <!-- <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">حذف</a></li> -->
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#notifications" aria-expanded="false" aria-controls="comments">
+                        <span class="menu-icon">
+                <i class="mdi mdi-newspaper"></i>
+              </span>
+                        <span class="menu-title">اعلانات</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="notifications">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:notif-create' %}">افزودن</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:notifs-admin' %}">مشاهده همه</a></li>
+                            <!-- <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">حذف</a></li> -->
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#msgs" aria-expanded="false" aria-controls="msgs">
+                        <span class="menu-icon">
+                <i class="mdi mdi-message"></i>
+              </span>
+                        <span class="menu-title">پیام ها</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="msgs">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:message-create' %}">افزودن</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:messages' %}">مشاهده همه</a></li>
+                            <!-- <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">حذف</a></li> -->
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#users" aria-expanded="false" aria-controls="users">
+                        <span class="menu-icon">
+                <i class="mdi mdi mdi-account-circle
+                "></i>
+              </span>
+                        <span class="menu-title">کاربران</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="users">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:user-create' %}">افزودن</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:users' %}">مشاهده همه</a></li>
+                            <!-- <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">حذف</a></li> -->
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#chal" aria-expanded="false" aria-controls="chal">
+                        <span class="menu-icon">
+                <i class="mdi mdi-apps"></i>
+              </span>
+                        <span class="menu-title">چالش ها</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="chal">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:challenge-create' %}">افزودن</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:challenges' %}">مشاهده همه</a></li>
+                            <!-- <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">حذف</a></li> -->
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'account:comments' %}">
+                        <span class="menu-icon">
+                <i class="mdi mdi mdi-comment-text"></i>
+              </span>
+                        <span class="menu-title">مدیریت نظرات</span>
+                    </a>
+                </li>
+
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'account:views' %}">
+                        <span class="menu-icon">
+                <i class="mdi mdi mdi-comment-text"></i>
+              </span>
+                        <span class="menu-title">بازدیدها</span>
+                    </a>
+                </li>
+
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'account:chart' %}">
+                        <span class="menu-icon">
+                <i class="mdi mdi mdi-chart-line                "></i>
+              </span>
+                        <span class="menu-title">سیستم آمار</span>
+                    </a>
+                </li>
+                {% elif user.is_author %}
+                <li class="nav-item nav-category">
+                    <span class="nav-link">پنل مدیریت</span>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'account:dashboard' %}">
+                        <span class="menu-icon">
+                <i class="mdi mdi-speedometer"></i>
+              </span>
+                        <span class="menu-title">داشبورد</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#posts" aria-expanded="false" aria-controls="posts">
+                        <span class="menu-icon">
+                <i class="mdi mdi mdi-buffer                "></i>
+              </span>
+                        <span class="menu-title">مقالات</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="posts">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:article-create' %}">افزودن</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:articles'  %}">مشاهده همه</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#wc" aria-expanded="false" aria-controls="posts">
+                        <span class="menu-icon">
+                <i class="mdi mdi-google-circles-extended"></i>
+              </span>
+                        <span class="menu-title">راه های ارتباطی من</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="wc">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:contact-create' %}">افزودن</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'account:contacts'  %}">مشاهده همه</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'account:article-likes' %}">
+                        <span class="menu-icon">
+                <i class="mdi mdi-emoticon"></i>
+              </span>
+                        <span class="menu-title">مقالات مورد علاقه</span>
+                        <!-- <i class="menu-arrow"></i> -->
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'account:messages' %}">
+                        <span class="menu-icon">
+                <i class="mdi mdi-message"></i>
+              </span>
+                        <span class="menu-title">پیام های من‌</span>
+                        <!-- <i class="menu-arrow"></i> -->
+                    </a>
+                </li>
+
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'account:comments' %}">
+                        <span class="menu-icon">
+                <i class="mdi mdi mdi-comment-text"></i>
+              </span>
+                        <span class="menu-title">مدیریت نظرات من</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'account:challenges' %}">
+                        <span class="menu-icon">
+                <i class="mdi mdi-apps"></i>
+              </span>
+                        <span class="menu-title">چالش ها</span>
+                        <!-- <i class="menu-arrow"></i> -->
+                    </a>
+                </li>
+                {% elif not user.is_superuser and not user.is_author and user.is_active %}
+                <li class="nav-item nav-category">
+                    <span class="nav-link">پنل کاربری</span>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'account:dashboard' %}">
+                        <span class="menu-icon">
+                <i class="mdi mdi-speedometer"></i>
+              </span>
+                        <span class="menu-title">داشبورد</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'account:article-likes' %}">
+                        <span class="menu-icon">
+                <i class="mdi mdi mdi-buffer"></i>
+              </span>
+                        <span class="menu-title">مقالات مورد علاقه</span>
+                        <!-- <i class="menu-arrow"></i> -->
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'account:messages' %}">
+                        <span class="menu-icon">
+                <i class="mdi mdi-message"></i>
+              </span>
+                        <span class="menu-title">پیام های من‌</span>
+                        <!-- <i class="menu-arrow"></i> -->
+                    </a>
+                </li>
+                <!-- <li class="nav-item menu-items">
+            <a class="nav-link" href="{% url 'account:categories' %}">
+              <span class="menu-icon">
+                <i class="mdi mdi mdi-library-plus"></i>
+              </span>
+              <span class="menu-title">مشاهده دسته بندیها</span>
+              <i class="menu-arrow"></i> 
+            </a>
+          </li>-->
+                <!-- <li class="nav-item menu-items">
+            <a class="nav-link">
+              <span class="menu-icon">
+                <i class="mdi mdi mdi-arrange-bring-forward"></i>
+              </span>
+              <span class="menu-title">اعلانات من</span>
+            </a>
+          </li> -->
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'account:comments' %}">
+                        <span class="menu-icon">
+                <i class="mdi mdi mdi-comment-text"></i>
+              </span>
+                        <span class="menu-title">نظرات من</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'account:challenges' %}">
+                        <span class="menu-icon">
+                <i class="mdi mdi-apps"></i>
+              </span>
+                        <span class="menu-title">چالش ها</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        <!-- partial -->
+        <div class="rtl container-fluid page-body-wrapper">
+            <!-- partial:partials/_navbar.html -->
+            <nav class="navbar p-0 fixed-top d-flex flex-row">
+                <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
+                    <a class="navbar-brand brand-logo-mini" href="{% url 'account:dashboard' %}"><img src="" alt="logo" /></a>
+                </div>
+                <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+                    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+              <span class="mdi mdi-menu"></span>
+            </button>
+                    <ul class="navbar-nav w-100">
+                        <li class="nav-item w-100">
+                            <form method="POST" class="nav-link mt-2 mt-md-0 d-none d-lg-flex search" action="{% url 'account:dashboard-search' %}">
+                                {% csrf_token %}
+                                <input type="text" class="form-control" placeholder="جستجو در مقالات">
+                                <input class="btn btn-primary btn-sm" type="submit" value="پیدا کن">
+                            </form>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav navbar-nav-right">
+                        {% if user.is_superuser %}
+                        <li class="nav-item nav-settings d-none d-lg-block">
+                            <a class="nav-link" href="{% url 'account:article-create' %}">
+                                <button class="btn btn-success"> پست جدیدت رو بساز +</button>
+                            </a>
+                        </li>
+                        {% elif user.is_author %}
+                        <li class="nav-item nav-settings d-none d-lg-block">
+                            <a class="nav-link" href="{% url 'account:article-create' %}">
+                                <button class="btn btn-success"> پست جدیدت رو بساز +</button>
+                            </a>
+                        </li>
+                        {% elif user.is_active %}
+                        <li class="nav-item nav-settings d-none d-lg-block">
+                            <a class="nav-link" id="author-req">
+                                <button class="btn btn-success"> درخواست نویسندگی +</button>
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item dropdown border-left">
+                            <a class="nav-link count-indicator dropdown-toggle" href="#" data-toggle="dropdown">
+                                <i class="mdi mdi-bell"></i>
+                                <span class="count bg-danger"></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list">
+                                <h6 id="xa" class="p-3 mb-0">اعلانات</h6>
+                                {% for i in notifs %} {% if not i.read == request.user %}
+                                <div id="abcdefg" class="dropdown-divider"></div>
+                                <a class="dropdown-item preview-item">
+                                    <div class="preview-thumbnail">
+                                        <div id="dx" class="d-flex" onclick="readThisNotif('{{i.pk}}');">
+                                            <div id="{{i.pk}}" class="preview-icon bg-dark rounded-circle">
+                                                <i class="fas fa-check text-success"></i>
+                                            </div>
+                                            <div class="preview-item-content" style="width: 400px;">
+                                                <p class="preview-subject mb-1">{{i.title}}</p>
+                                                <p class="text-muted  mb-0">{{i.text}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                {% endif %} {% endfor %}
+                                <div class="dropdown-divider"></div>
+                                <p class="p-3 mb-0 text-center"><a>مشاهده همه اعلانات</a></p>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
+                                <div class="navbar-profile">
+                                    {% if user.profile_pic %}
+                                    <img class="img-xs rounded-circle" src="{{ user.profile_pic.url }}" alt="">
+                                    <p class="mb-0 d-none d-sm-block navbar-profile-name">{{ user.username }}</p>
+                                    <i class="mdi mdi-menu-down d-none d-sm-block"></i> {% else %}
+                                    <img class="img-xs rounded-circle" src="{% static 'assetz/img/anony-avatar.png' %}" alt="">
+                                    <p class="mb-0 d-none d-sm-block navbar-profile-name">{{ user.username }}</p>
+                                    <i class="mdi mdi-menu-down d-none d-sm-block"></i> {% endif %}
+                                </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
+                                <h6 class="p-3 mb-0">پروفایل کاربری</h6>
+                                <div class="dropdown-divider"></div>
+                                <a href="{% url 'account:update' user.pk %}" class="dropdown-item preview-item">
+                                    <div class="preview-thumbnail">
+                                        <div class="preview-icon bg-dark rounded-circle">
+                                            <i class="mdi mdi-settings text-primary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="preview-item-content">
+                                        <p class="preview-subject mb-1">تنظیمات</p>
+                                    </div>
+                                </a>
+                                {% if user.is_superuser or user.is_author %}
+                                <div class="dropdown-divider"></div>
+                                <a href="{% url 'account:article-create' %}" class="dropdown-item preview-item">
+                                    <div class="preview-thumbnail">
+                                        <div class="preview-icon bg-dark rounded-circle">
+                                            <i class="mdi mdi mdi-buffer text-success"></i>
+                                        </div>
+                                    </div>
+                                    <div class="preview-item-content">
+                                        <p class="preview-subject mb-1">افزودن مقاله جدید</p>
+                                    </div>
+                                </a>
+                                {% else %}
+                                <div class="dropdown-divider"></div>
+                                <a id="author-req" class="dropdown-item preview-item">
+                                    <div class="preview-thumbnail">
+                                        <div class="preview-icon bg-dark rounded-circle">
+                                            <i class="mdi mdi-account-check text-success"></i>
+                                        </div>
+                                    </div>
+                                    <div class="preview-item-content">
+                                        <p class="preview-subject mb-1">درخواست نویسندگی</p>
+                                    </div>
+                                </a>
+                                {% endif %}
+                                <div class="dropdown-divider"></div>
+                                <a href="{% url 'account:password_change' %}" class="dropdown-item preview-item">
+                                    <div class="preview-thumbnail">
+                                        <div class="preview-icon bg-dark rounded-circle">
+                                            <i class="mdi mdi-alert-octagon text-warning"></i>
+                                        </div>
+                                    </div>
+                                    <div class="preview-item-content">
+                                        <p class="preview-subject mb-1">تغییر پسورد</p>
+                                    </div>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="{% url 'account:logout' %}" class="dropdown-item preview-item">
+                                    <div class="preview-thumbnail">
+                                        <div class="preview-icon bg-dark rounded-circle">
+                                            <i class="mdi mdi-account-remove text-secondary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="preview-item-content">
+                                        <p class="preview-subject mb-1">خارج شدن</p>
+                                    </div>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a onclick="openTheModal()" class="dropdown-item preview-item">
+                                    <div class="preview-thumbnail">
+                                        <div class="preview-icon bg-dark rounded-circle">
+                                            <i class="mdi mdi-logout text-danger"></i>
+                                        </div>
+                                    </div>
+                                    <div class="preview-item-content">
+                                        <p class="preview-subject mb-1">حذف اکانت</p>
+                                    </div>
+                                </a>
+                                <!-- <div class="dropdown-divider"></div>
+                  <p class="p-3 mb-0 text-center">حذف اکانت </p> -->
+                            </div>
+                        </li>
+                    </ul>
+                    <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+              <span class="mdi mdi-format-line-spacing"></span>
+            </button>
+                </div>
+            </nav>
+
+
+
+            {% block content %} {% endblock %}
+
+
+
+
+
+            <!-- content-wrapper ends -->
+            <!-- partial:partials/_footer.html -->
+            <footer class="footer">
+                <div class="d-sm-flex justify-content-center justify-content-sm-between">
+                    <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">فارسی سازی شده توسط ادمین عزیز سایتتون</span>
+                    <!-- <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Free <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a> from Bootstrapdash.com</span> -->
+                </div>
+            </footer>
+            <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+
+</body>
+
+
+<!-- container-scroller -->
+<!-- plugins:js -->
+<script src="{% static 'assets/vendors/js/vendor.bundle.base.js' %}"></script>
+<!-- endinject -->
+<!-- Plugin js for this page -->
+<script src="{% static 'assets/vendors/chart.js/Chart.min.js' %}"></script>
+<script src="{% static 'assets/vendors/progressbar.js/progressbar.min.js' %}"></script>
+<script src="{% static 'assets/vendors/jvectormap/jquery-jvectormap.min.js' %}"></script>
+<script src="{% static 'assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
+<script src="{% static 'assets/vendors/owl-carousel-2/owl.carousel.min.js' %}"></script>
+<!-- End plugin js for this page -->
+<!-- inject:js -->
+<script src="{% static 'assets/js/off-canvas.js' %}"></script>
+<script src="{% static 'assets/js/hoverable-collapse.js' %}"></script>
+<script src="{% static 'assets/js/misc.js' %}"></script>
+<script src="{% static 'assets/js/settings.js' %}"></script>
+<script src="{% static 'assets/js/todolist.js' %}"></script>
+<!-- endinject -->
+<!-- Custom js for this page -->
+<script src="{% static 'assets/js/dashboard.js' %}"></script>
+<!-- End custom js for this page -->
+
+</html>

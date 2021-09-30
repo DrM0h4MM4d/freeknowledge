@@ -1,0 +1,177 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<style>
+  .s-s{
+    direction: ltr;
+  }
+    
+    
+@media only screen and (max-width: 900px) {
+  .manage-user-li{
+    display: flex;
+  }
+}
+</style>
+
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>
+  {% block title %}
+  {% endblock %}
+</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  <script src="{% static 'assets/js/jquery.js' %}"></script>
+  <!-- Favicons -->
+  <link href="{% static 'assetz/css/icofont/icofont.min.css' %}" rel="stylesheet">
+  <link href="assetz/img/favicon.png" rel="icon">
+  <link href="assetz/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,700,700i&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assetz/vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'assetz/vendor/animate.css/animate.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assetz/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assetz/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assetz/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assetz/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assetz/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+  <!-- Template Main CSS File -->
+  <link href="{% static 'assetz/css/style.css' %}" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: Moderna - v4.3.0
+  * Template URL: https://bootstrapmade.com/free-bootstrap-template-corporate-moderna/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+
+
+</head>
+
+<body class="rtl">
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top d-flex align-items-center header-transparent">
+    <div class="container d-flex justify-content-between align-items-center">
+
+      <div class="logo">
+        <h1 class="text-light"><a href="{% url 'blog:home' %}"><span>دانش آزاد</span></a></h1>
+        <!-- <a href="index.html"><img src="assetz/img/logo.png" alt="" class="img-fluid"></a>-->
+      </div>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="active" href="{% url 'blog:home' %}">صفحه اصلی</a></li>
+          <li><a href="{% url 'blog:posts' %}"><span>مقالات</span> </a></li>
+          <li><a href="{% url 'blog:authors' %}">نویسندگان</a></li>
+          <li><a href="{% url 'blog:contact' %}">ارتباط</a></li>
+          <li><a href="{% url 'blog:about' %}">درباره</a></li>
+          {% if not user.is_authenticated %}
+          <li class="manage-user-li"><a href="{% url 'account:register' %}"><i class="fas fa-user-plus"></i> ثبت نام</a></li>
+          <li class="manage-user-li"><a href="{% url 'account:login' %}"><i class="fas fa-door-open"></i> ورود </a></li>
+          {% else %}
+          <li class="manage-user-li"><a href="{% url 'account:logout' %}"><i class="fas fa-sign-out-alt"></i> خارج شدن </a></li>
+          <li class="manage-user-li"><a href="{% url 'account:dashboard' %}"><i class="fas fa-home"></i> داشبورد</a></li>
+          {% endif %}
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+
+    </div>
+  </header><!-- End Header -->
+
+  {% block content %}
+  {% endblock %}
+
+  
+  <!-- ======= Footer ======= -->
+  <footer id="footer" data-aos="fade-up" data-aos-easing="ease-in-out" data-aos-duration="500">
+
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-3 col-md-6 footer-links">
+            <h4>لینکها</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">صفحه اصلی</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">مقالات</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">درباره</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">ارتباط</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">نویسندگان</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-3 col-md-6 footer-links">
+            <h4>دسته بندیها</h4>
+            {% for category in categories %}
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="{{category.get_absolute_url}}">{{category.title}}</a></li>
+
+            </ul>
+            {% endfor %}
+          </div>
+
+          <div class="col-lg-3 col-md-6 footer-contact">
+            <h4>ارتباط با ما</h4>
+            <p>
+              <!-- A108 Adam Street <br> -->
+              <!-- New York, NY 535022<br> -->
+              <!-- United States <br><br> -->
+              <strong>Telegram:</strong> <a href="https://t.me/FreeKnowledgeOfficial">@FreeKnowledgeOfficial</a><br>
+              <strong>Github:</strong><a href="https://github.com/DrM0h4MM4d"> DrM0h4MM4d</a><br>
+              <strong>Email:</strong><a href="mailto:freeknwoledgeofficial@gmail.com">freeknowledgemail</a><br>
+            </p>
+
+          </div>
+
+          <div class="col-lg-3 col-md-6 footer-info">
+            <h3> درباره ما</h3>
+            <p>وبسایت ما تلاش بر پیشرفت سواد تکنولوژی در بین مردم خوب کشورمان را دارد و خواستار آینده ای بهتر و قدرتمند برای کشور عزیزمان است.</p>
+            <div class="social-links mt-3">
+              <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+              <a href="https://t.me/FreeKnowledgeOfficial" class="telegram"><i class="bx bxl-telegram"></i></a>
+              <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+              <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="copyright">
+        &copy; تمامی حقوق متعلق به <strong><span>همین وبسایت</span></strong> است. 
+      </div>
+      <div class="credits">
+        فارسی سازی و بهینه شده توسط ادمین
+      </div>
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'assetz/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'assetz/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assetz/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'assetz/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'assetz/vendor/php-email-form/validate.js' %}"></script>
+  <script src="{% static 'assetz/vendor/purecounter/purecounter.js' %}"></script>
+  <script src="{% static 'assetz/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'assetz/vendor/waypoints/noframework.waypoints.js' %}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'assetz/js/main.js' %}"></script>
+
+</body>
+
+</html>

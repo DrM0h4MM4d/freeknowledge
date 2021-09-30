@@ -1,0 +1,88 @@
+{% extends 'base_blog/base.html' %}
+{% load static %}
+{% block content %}
+<style>
+  #header.header-transparent {
+      background: #1e4356 !important;
+  }
+  
+      .breadcrumbs ol li + li::before {
+      display: inline-block;
+      padding-right: 10px;
+      padding-left: 10px;
+      color: #6c757d;
+      content: " / ";
+  }
+  </style>
+
+
+{% block title %}
+دانش آزاد | {{title}}
+{% endblock title %}
+
+  <main id="main">
+
+    <!-- ======= Our Team Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>نویسندگان</h2>
+          <ol>
+            <li><a href="{% url 'blog:authors' %}">صفحه اصلی</a></li>
+            <li>نویسندگان</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Our Team Section -->
+
+    <!-- ======= Team Section ======= -->
+    <section class="team" data-aos="fade-up" data-aos-easing="ease-in-out" data-aos-duration="500">
+      <div class="container">
+      
+        <div class="row">
+          {% for i in authors %}
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+            <div class="member">
+              <div class="member-img">
+                {% if i.profile_pic %}
+                    <img src="{{i.profile_pic.url}}" height="200px" class="img-fluid" alt="{{i.username}}">
+                {% else %}
+                    <img src="{% static 'assetz/img/anony-avatar.png' %}" height="200px" alt="{{i.username}}">    
+                {% endif %}
+                {% if i.contactsuser_set.all %}
+                <div class="social"> 
+                {% for i in i.contactsuser_set.all %}
+                {% if i.title == 'gmail' %}
+                  <a href="{{i.url}}"><i class="icon bi bi-google"></i></a>
+                {% elif i.title == 'other' %}
+                  <a href="{{i.url}}"><i class="icon bi bi-x-diamond-fill"></i></a>
+                {% else %}
+                  <a href="{{i.url}}"><i class="icon bi bi-{{i.title}}"></i></a>
+                {% endif %}
+                
+                {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              <div class="member-info">
+                <h4>{{i.first_name}} {{i.last_name}}</h4>
+                <span>{{i.short_about|truncatechars:"50"}}
+                </span>
+                <p>{{i.about|truncatechars:"200"}}</p>
+              </div>
+              <div class="p-left">
+                <a href="{{i.get_absolute_url}}">مشاهده پروفایل</a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div> 
+
+      </div>
+    </section><!-- End Team Section -->
+
+  </main><!-- End #main -->
+{% endblock %}

@@ -1,0 +1,10 @@
+.env
+.idea/
+.git/
+bot.session
+account/__pycache__/
+blog/__pycache__/
+core/__pycache__/
+account/migrations/*
+blog/migrations/*
+extensions/__pycache__/

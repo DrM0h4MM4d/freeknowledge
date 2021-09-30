@@ -1,0 +1,38 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div id="msg"></div>
+      <div class="page-header">
+        <h3 class="page-title"> پیام جدیدت را بنویس </h3>
+        <nav aria-label="breadcrumb" dir="ltr" class="text-right">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">داشبورد</a></li>
+            <li class="breadcrumb-item active" aria-current="page">افزودن پیام</li>
+          </ol>
+        </nav>
+      </div>
+      <div class="row">
+        
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">پیام جدید</h4>
+              <p class="card-description"> اطلاعات مربوط به پیام را وارد کنید </p>
+              <form class="forms-sample" enctype="multipart/form-data" method="POST">
+                {% csrf_token %}
+                    <div class="form-group">
+                      {{form|crispy}}  
+                    </div>
+                    <div class="col text-center">
+                      <input type="submit" class="btn btn-primary" value="افزودن پیام">                    
+                    </div>
+                  </form>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
