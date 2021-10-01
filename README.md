@@ -29,3 +29,6 @@ Deployed on heroku
 Corona free admin dashboard (Converted to RTL & Ajax added)
 
 Moderna free bootstrap template (Converted to RTL & Ajax added)
+
+
+** Under GPL License **
