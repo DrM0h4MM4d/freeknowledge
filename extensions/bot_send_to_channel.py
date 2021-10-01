@@ -1,5 +1,5 @@
 from pyrogram import Client
-from decuple import config
+from decouple import config
 
 app = Client("bot", api_id=config("TELEGRAM_API_ID"), api_hash=config("TELEGRAM_API_HASH"), 
                             bot_token=config('TELEGRAM_BOT_TOKEN'))
