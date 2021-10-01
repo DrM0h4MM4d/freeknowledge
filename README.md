@@ -10,6 +10,10 @@ Class Based Views
 
 Custom Authentication by Email Verification
 
+Custom Admin Panel
+
+Middleware for views
+
 Celery+Redis for sending email
 
 Telegram API bot for send articles on channel
